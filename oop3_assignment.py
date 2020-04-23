@@ -33,9 +33,9 @@ class Set:
         count = 0
         for i in self.data :
             if i in other.data :
-                count += 1
-        if count == len(self.data) :
-            return True
+                count += 1            
+            if count == len(self.data) :
+                return True
         else :
             return False
 
@@ -56,7 +56,7 @@ class Set:
                 if j not in i :
                     x.remove(j)
         self = Set(x)
-        return self     
+        return self
 
 
     def difference_update(self, *others) :
@@ -76,8 +76,8 @@ class Set:
                 l.append(i)
         for j in other.data :
             if j not in a.data :
-                l.append(i)
-        self.data = l
+                l.append(j)
+        self = Set(l)
         return self
 
     def add(self, elem) :
@@ -91,43 +91,131 @@ class Set:
             else :
                 raise KeyError
         except KeyError : 
-            print("no elem")
+            print(f'There is no {elem}')
 
+    def __lt__(self, other) :
+        if self.data != other.data :
+            return self.issubset(other)
+        else : 
+            return False
     
-#issubset
+    def __le__(self, other) :
+        return self.issubset(other)
+
+    def __gt__(self, other) :
+        if self.data != other.data :
+            return self.issuperset(other)
+        else :
+            return False
+    
+    def __ge__(self, other) :
+        return self.issuperset(other)
+    
+    def __ior__(self, other) :
+        for i in other.data :
+            if i not in self.data :
+                self.data.append(i)
+        return self
+
+    def __ixor__(self, other) :
+        new = []
+        first = self.intersection(other)
+        for i in self.data :
+            if i not in first.data :
+                new.append(i)
+        for i in other.data :
+            if i not in first.data :
+                new.append(i)
+        self = Set(new)
+        return self
+
+    def __iand__(self, other) :
+        new = []
+        a = self.intersection(other)
+        new = a.data
+        self = Set(new)
+        return self
+
+    def __isub__(self, other) :
+        l = []
+        a = self.intersection(other)
+        for i in self.data :
+            if i not in a.data :
+                l.append(i)
+        self = Set(l)
+        return self
+
+A = Set([1,2,3,4,5])
+B = Set([2,3,4,7,8])
+A^=B
+print(A)
+
+C = Set([1,2,3,4,5])
+D = Set([3,4,5])
+C&=D
+print(C)
+
+E = Set([1,2,3,5,6])
+F = Set([7,4,3,5])
+E|=F
+print(E)
+
+G = Set([2,5,6,9])
+H = Set([3,5,7,9])
+G-=H
+print(G)
+
 a = Set([1,2,3,4])
-b = Set([1,2])
+b = Set([1,2])  
+print(a>=b)
+print(a>b)
+print(b<a)
+
+#issubset
 print(b.issubset(a))
+
 #issuperset
 print(b.issuperset(a))
 print(a.issuperset(b))
 
+aa = Set([1,2,3])
+bb = Set([1,2,3])
+print(aa>bb)
+print(aa<bb)
+print(aa.issubset(bb))
+print(bb.issubset(aa))
+
 x = Set([1,3,5,7, 1, 3])
 y = Set([2,1,4,5,6])
 z = Set([5,6,7,8,9])
-print(x, y, len(x))
+print(x, y, z, len(x))
+
 #intersection_update
-# 세트를 업데이트하고 그 세트에서 발견 된 요소 만 유지합니다.
-# print(x.intersection_update(y,z))
+print(x.intersection_update(y,z))
+print(x, y, z, len(x))
+
 #difference_update
-#세트를 업데이트하고 다른 세트에서 발견 된 요소를 제거합니다.
-# print(x.difference_update(y,z))
+d = Set([5,6,7,9])
+e = Set([3,5,7,8,6])
+f = Set([2,4,6,8])
+print(d, e, f, len(d))
+print(d.difference_update(e,f))
+print(d, e, f, len(x))
+
 #symmetric_difference_update(other)
-print(a.symmetric_difference_update(b))
-print(a, b)
-# 세트에서 업데이트 된 요소 만 유지하고 두 세트 모두에서 요소는 유지하지 않습니다.
+my = Set([4,6,8,9])
+your = Set([4,6,8,10])
+print(my.symmetric_difference_update(your))
+print(my)
+
 #add(elem)
-# 세트에 요소 elem 을 추가하십시오 .
-a.add(5)
-print(a)
+my1 = Set([4,6,7,8,9])
+my1.add(8)
+my1.add(19)
+print(my1)
+
 #remove(elem)remove(elem)
-#세트에서 요소 elem 을 제거하십시오 . 발생시킵니다 KeyError경우 ELEM이 세트에 포함되어 있지 않습니다.
-print(x, y, len(x))
-print(x.intersection(y), y.union(x))
-print(x & y, x | y)
-# print(x[2], y[:2])
-for element in x:
-    print(element, end=' ')
-print()
-print(3 not in y)  # membership test
-print(list(x))   # convert to list because x is iterable
+my2 = Set([3,6,8,9,11])
+my2.remove(3)
+my2.remove(2)
+print(my2)
